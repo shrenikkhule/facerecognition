@@ -1,10 +1,15 @@
 import Sidebar from "../components/Sidebar";
+import Navbar from "../components/Navbar";
 
 const MainLayout = ({ children }) => {
   return (
     <div className="flex">
       <Sidebar />
-      <main className="flex-1 p-6 bg-gray-50 min-h-screen">{children}</main>
+
+      <div className="flex-1 flex flex-col">
+        <Navbar />
+        <div className="p-6 bg-gray-100 min-h-screen">{children}</div>
+      </div>
     </div>
   );
 };
