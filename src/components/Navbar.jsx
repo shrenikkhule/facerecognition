@@ -152,7 +152,7 @@ const Navbar = ({ toggleSidebar }) => {
       )}
 
       <nav
-        className={`top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        className={`sticky top-0 w-full right-0 z-50 transition-all duration-500 ${
           scrolled
             ? "shadow-lg shadow-gray-200/40"
             : "shadow-sm shadow-gray-100/40"

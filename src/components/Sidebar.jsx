@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -12,27 +12,12 @@ import {
   ChevronLeft,
   ChevronRight,
   Zap,
-  Circle,
 } from "lucide-react";
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [hoveredItem, setHoveredItem] = useState(null);
-  const [currentTime, setCurrentTime] = useState(new Date());
-  const [activeOrb, setActiveOrb] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    const orbTimer = setInterval(() => {
-      setActiveOrb((prev) => (prev + 1) % 3);
-    }, 2000);
-    return () => clearInterval(orbTimer);
-  }, []);
 
   const menuItems = [
     {
@@ -97,7 +82,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     <>
       {isOpen && (
         <div
-          className="fixed inset-0 bg-white/60 backdrop-blur-md z-30 lg:hidden"
+          className="fixed top-0 left-0 w-full inset-0 bg-white/60 backdrop-blur-md z-30 lg:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
@@ -111,48 +96,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             "linear-gradient(180deg, #f8f9ff 0%, #f0f2ff 30%, #e8ecff 70%, #f5f0ff 100%)",
         }}
       >
-        {/* Decorative background elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div
-            className={`absolute -top-20 -right-20 w-40 h-40 rounded-full transition-all duration-[2000ms] ${
-              activeOrb === 0 ? "opacity-30 scale-110" : "opacity-10 scale-100"
-            }`}
-            style={{
-              background:
-                "radial-gradient(circle, rgba(139,92,246,0.3) 0%, transparent 70%)",
-            }}
-          />
-          <div
-            className={`absolute top-1/3 -left-10 w-32 h-32 rounded-full transition-all duration-[2000ms] ${
-              activeOrb === 1 ? "opacity-30 scale-110" : "opacity-10 scale-100"
-            }`}
-            style={{
-              background:
-                "radial-gradient(circle, rgba(6,182,212,0.3) 0%, transparent 70%)",
-            }}
-          />
-          <div
-            className={`absolute bottom-20 -right-10 w-36 h-36 rounded-full transition-all duration-[2000ms] ${
-              activeOrb === 2 ? "opacity-30 scale-110" : "opacity-10 scale-100"
-            }`}
-            style={{
-              background:
-                "radial-gradient(circle, rgba(244,114,182,0.3) 0%, transparent 70%)",
-            }}
-          />
-
-          {/* Subtle grid pattern */}
-          <div
-            className="absolute inset-0 opacity-[0.03]"
-            style={{
-              backgroundImage: `radial-gradient(circle, #6366f1 1px, transparent 1px)`,
-              backgroundSize: "24px 24px",
-            }}
-          />
-        </div>
-
-        {/* Glass border on right */}
-        <div className="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-violet-200/50 via-blue-200/50 to-purple-200/50" />
+        <div className="absolute right-0 top-0 bottom-0 w-px bg-linear-to-b from-violet-200/50 via-blue-200/50 to-purple-200/50" />
 
         {/* Logo Section */}
         <div className="relative h-20 flex items-center justify-between px-4">
@@ -173,7 +117,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                   }}
                 />
               </div>
-              <div className="relative bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 p-2.5 rounded-2xl shadow-lg shadow-violet-500/20">
+              <div className="relative bg-linear-to-br from-violet-500 via-purple-500 to-indigo-600 p-2.5 rounded-2xl shadow-lg shadow-violet-500/20">
                 <ScanFace className="text-white w-6 h-6" strokeWidth={2} />
               </div>
               {/* Pulse dot */}
@@ -222,48 +166,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           )}
         </div>
 
-        {/* Time Display */}
-        {!collapsed && (
-          <div className="mx-4 mb-3 px-4 py-3 rounded-2xl bg-white/60 backdrop-blur-sm border border-white/80 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-[10px] font-medium text-gray-400 uppercase tracking-wider">
-                  Current Time
-                </p>
-                <p className="text-lg font-bold text-gray-700 tabular-nums">
-                  {currentTime.toLocaleTimeString("en-US", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: true,
-                  })}
-                </p>
-              </div>
-              <div className="flex gap-1">
-                {[0, 1, 2].map((i) => (
-                  <div
-                    key={i}
-                    className={`w-1.5 h-1.5 rounded-full transition-all duration-700 ${
-                      activeOrb === i
-                        ? "bg-violet-500 scale-125"
-                        : "bg-gray-300 scale-100"
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto overflow-x-hidden px-3 space-y-1 relative">
-          {!collapsed && (
-            <div className="px-3 pt-2 pb-3">
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">
-                Navigation
-              </p>
-            </div>
-          )}
-
+        <nav className="flex-1 overflow-y-auto overflow-x-hidden mt-4 px-3 space-y-1 relative">
           {menuItems.map((item, index) => {
             const Icon = item.icon;
             return (
@@ -290,7 +194,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                     {/* Active indicator line */}
                     {isActive && (
                       <div
-                        className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 rounded-r-full bg-gradient-to-b ${item.color}`}
+                        className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 rounded-r-full bg-linear-to-b ${item.color}`}
                         style={{
                           animation: "slideIn 0.3s ease-out",
                         }}
@@ -302,7 +206,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                       <div
                         className={`relative p-2 rounded-xl transition-all duration-300 ${
                           isActive
-                            ? `bg-gradient-to-br ${item.color} shadow-md`
+                            ? `bg-linear-to-br ${item.color} shadow-md`
                             : hoveredItem === index
                               ? "bg-gray-100"
                               : "bg-transparent"
@@ -321,7 +225,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                       {/* Glow effect for active */}
                       {isActive && (
                         <div
-                          className={`absolute inset-0 rounded-xl bg-gradient-to-br ${item.color} blur-lg opacity-30`}
+                          className={`absolute inset-0 rounded-xl bg-linear-to-br ${item.color} blur-lg opacity-30`}
                         />
                       )}
                     </div>
@@ -342,7 +246,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                           <span
                             className={`px-2.5 py-1 text-[10px] font-bold rounded-full transition-all duration-300 ${
                               isActive
-                                ? `bg-gradient-to-r ${item.color} text-white shadow-sm`
+                                ? `bg-linear-to-r ${item.color} text-white shadow-sm`
                                 : "bg-gray-100 text-gray-500"
                             }`}
                           >
@@ -372,7 +276,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
           {/* Divider */}
           <div className="py-3 px-3">
-            <div className="h-px bg-gradient-to-r from-transparent via-gray-300/50 to-transparent" />
+            <div className="h-px bg-linear-to-r from-transparent via-gray-300/50 to-transparent" />
           </div>
 
           {!collapsed && (
@@ -406,14 +310,14 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                   <>
                     {isActive && (
                       <div
-                        className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 rounded-r-full bg-gradient-to-b ${item.color}`}
+                        className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 rounded-r-full bg-linear-to-b ${item.color}`}
                       />
                     )}
                     <div className="relative">
                       <div
                         className={`relative p-2 rounded-xl transition-all duration-300 ${
                           isActive
-                            ? `bg-gradient-to-br ${item.color} shadow-md`
+                            ? `bg-linear-to-br ${item.color} shadow-md`
                             : hoveredItem === itemIndex
                               ? "bg-gray-100"
                               : "bg-transparent"
@@ -436,7 +340,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                       </div>
                       {isActive && (
                         <div
-                          className={`absolute inset-0 rounded-xl bg-gradient-to-br ${item.color} blur-lg opacity-30`}
+                          className={`absolute inset-0 rounded-xl bg-linear-to-br ${item.color} blur-lg opacity-30`}
                         />
                       )}
                     </div>
@@ -466,7 +370,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
         {/* Logout Section */}
         <div className="p-3 relative">
-          <div className="absolute top-0 left-3 right-3 h-px bg-gradient-to-r from-transparent via-gray-300/50 to-transparent" />
+          <div className="absolute top-0 left-3 right-3 h-px bg-linear-to-r from-transparent via-gray-300/50 to-transparent" />
           <button
             onClick={handleLogout}
             className={`flex items-center gap-3 w-full rounded-2xl transition-all duration-300 group hover:bg-red-50 border border-transparent hover:border-red-100 ${
@@ -492,7 +396,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       {/* Spacer */}
       <div
         className={`hidden lg:block transition-all duration-500 ${
-          collapsed ? "w-20" : "w-72"
+          collapsed ? "w-20" : "w-56"
         }`}
       />
 
