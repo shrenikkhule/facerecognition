@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import Swal from "sweetalert2";
 import {
   ScanFace,
   Mail,
@@ -23,6 +25,40 @@ export const Login = () => {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
+
+  const [registerForm, setRegisterForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const handleRegisterChange = (e) => {
+    setRegisterForm({
+      ...registerForm,
+      [e.target.name]: e.target.value,
+    });
+  };
+  const handleRegister = async (e) => {
+    e.preventDefault();
+
+    try {
+      await axios.post("http://localhost:5000/api/auth/register", registerForm);
+
+      Swal.fire({
+        icon: "success",
+        title: "Registration Successful",
+        text: "You can login now",
+      });
+
+      setShowRegister(false);
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Registration Failed",
+        text: err.response?.data?.message || "Something went wrong",
+      });
+    }
+  };
 
   const handleChange = (e) => {
     setForm({
@@ -37,16 +73,34 @@ export const Login = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate loading
-    setTimeout(() => {
-      if (form.email === "shrenik@gmail.com" && form.password === "123") {
-        localStorage.setItem("token", "demo-token");
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/login",
+        form,
+      );
+
+      localStorage.setItem("token", res.data.token);
+
+      Swal.fire({
+        icon: "success",
+        title: "Login Successful",
+        text: "Welcome to Dashboard",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      setTimeout(() => {
         navigate("/dashboard");
-      } else {
-        setError("Invalid Email or Password");
-        setIsLoading(false);
-      }
-    }, 1000);
+      }, 2000);
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Login Failed",
+        text: err.response?.data?.message || "Invalid Credentials",
+      });
+    }
+
+    setIsLoading(false);
   };
 
   return (
@@ -253,6 +307,13 @@ export const Login = () => {
                   )}
                 </div>
               </button>
+              <button
+                type="button"
+                onClick={() => setShowRegister(true)}
+                className="w-full mt-3 border border-indigo-500 text-indigo-600 py-3 rounded-lg font-semibold hover:bg-indigo-50 transition"
+              >
+                Create New Account
+              </button>
             </form>
 
             {/* Demo Credentials Card */}
@@ -333,6 +394,59 @@ export const Login = () => {
           background-size: 20px 20px;
         }
       `}</style>
+      {showRegister && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl">
+            <h2 className="text-2xl font-bold mb-6 text-center">
+              Register New Account
+            </h2>
+
+            <form onSubmit={handleRegister} className="space-y-4">
+              <input
+                name="name"
+                placeholder="Full Name"
+                onChange={handleRegisterChange}
+                className="w-full border p-3 rounded-lg"
+                required
+              />
+
+              <input
+                name="email"
+                placeholder="Email"
+                onChange={handleRegisterChange}
+                className="w-full border p-3 rounded-lg"
+                required
+              />
+
+              <input
+                name="password"
+                placeholder="Password"
+                type="password"
+                onChange={handleRegisterChange}
+                className="w-full border p-3 rounded-lg"
+                required
+              />
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="submit"
+                  className="flex-1 bg-indigo-600 text-white py-3 rounded-lg font-semibold"
+                >
+                  Register
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowRegister(false)}
+                  className="flex-1 border py-3 rounded-lg font-semibold"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
