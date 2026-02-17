@@ -36,7 +36,7 @@ export const Attendance = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+   
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-800">
           Attendance Management
@@ -47,7 +47,6 @@ export const Attendance = () => {
         </button>
       </div>
 
-      {/* Filters */}
       <div className="bg-white p-4 rounded-xl shadow flex flex-wrap gap-4">
         <input type="date" className="border rounded-lg px-4 py-2" />
 
@@ -65,7 +64,7 @@ export const Attendance = () => {
         />
       </div>
 
-      {/* Table */}
+    
       <div className="bg-white rounded-xl shadow overflow-hidden">
         <table className="w-full text-left">
           <thead className="bg-gray-50 border-b">

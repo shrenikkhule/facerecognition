@@ -44,7 +44,6 @@ import {
   Cpu,
 } from "lucide-react";
 
-// ─── Animated Counter Hook ───────────────────────────────────────
 const useAnimatedCounter = (end, duration = 2000, start = 0) => {
   const [count, setCount] = useState(start);
   const countRef = useRef(start);
@@ -81,7 +80,6 @@ const useAnimatedCounter = (end, duration = 2000, start = 0) => {
   return count;
 };
 
-// ─── Animated Progress Ring ──────────────────────────────────────
 const ProgressRing = ({ progress, size = 80, strokeWidth = 6, color }) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
@@ -122,7 +120,6 @@ const ProgressRing = ({ progress, size = 80, strokeWidth = 6, color }) => {
   );
 };
 
-// ─── Sparkline Chart ─────────────────────────────────────────────
 const Sparkline = ({ data, color = "#6366f1", height = 40 }) => {
   const max = Math.max(...data);
   const min = Math.min(...data);
@@ -187,7 +184,6 @@ const Sparkline = ({ data, color = "#6366f1", height = 40 }) => {
   );
 };
 
-// ─── Enhanced Bar Chart ──────────────────────────────────────────
 const BarChart = ({ data, labels, colors }) => {
   const max = Math.max(...data);
   const [animated, setAnimated] = useState(false);
@@ -226,7 +222,6 @@ const BarChart = ({ data, labels, colors }) => {
   );
 };
 
-// ─── Activity Feed Item ──────────────────────────────────────────
 const ActivityItem = ({ item, index }) => {
   const colors = {
     success: {
@@ -282,7 +277,6 @@ const ActivityItem = ({ item, index }) => {
   );
 };
 
-// ─── Camera Card ─────────────────────────────────────────────────
 const CameraCard = ({ camera, index }) => {
   const [hovered, setHovered] = useState(false);
 

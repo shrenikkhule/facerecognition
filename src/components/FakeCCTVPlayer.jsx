@@ -5,13 +5,11 @@ export const FakeCCTVPlayer = ({ video, name }) => {
   const [time, setTime] = useState(new Date());
   const [error, setError] = useState(false);
 
-  // Time update
   useEffect(() => {
     const t = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(t);
   }, []);
 
-  // Force play (browser fix)
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.muted = true;
@@ -41,23 +39,18 @@ export const FakeCCTVPlayer = ({ video, name }) => {
         </div>
       )}
 
-      {/* Noise */}
       <div className="absolute inset-0 noise pointer-events-none"></div>
 
-      {/* Scan lines */}
       <div className="absolute inset-0 scan pointer-events-none"></div>
 
-      {/* Timestamp */}
       <div className="absolute bottom-2 left-2 text-green-400 text-xs font-mono bg-black/60 px-2 py-1 rounded">
         {time.toLocaleString()}
       </div>
 
-      {/* Label */}
       <div className="absolute top-2 left-2 text-white text-xs bg-black/60 px-2 py-1 rounded">
         {name}
       </div>
 
-      {/* REC */}
       <div className="absolute top-2 right-2 flex items-center gap-1 text-red-500 text-xs">
         <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
         REC

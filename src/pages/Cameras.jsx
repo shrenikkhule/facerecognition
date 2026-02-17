@@ -27,7 +27,6 @@ export const Cameras = () => {
         CCTV MONITORING SYSTEM
       </h1>
 
-      {/* Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {cameras.map((cam) => (
           <div
@@ -53,7 +52,6 @@ export const Cameras = () => {
         ))}
       </div>
 
-      {/* Full Screen */}
       {activeCam && (
         <div
           className="fixed inset-0 bg-black/95 flex items-center justify-center z-50"

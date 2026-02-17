@@ -26,25 +26,15 @@ const Navbar = ({ toggleSidebar }) => {
   const [searchFocused, setSearchFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [scrolled, setScrolled] = useState(false);
-  const [currentTime, setCurrentTime] = useState(new Date());
+
   const [notifRead, setNotifRead] = useState([]);
-  const [activeOrb, setActiveOrb] = useState(0);
+
   const searchRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    const orbTimer = setInterval(() => setActiveOrb((p) => (p + 1) % 3), 3000);
-    return () => clearInterval(orbTimer);
   }, []);
 
   useEffect(() => {
@@ -165,8 +155,7 @@ const Navbar = ({ toggleSidebar }) => {
           WebkitBackdropFilter: "blur(20px) saturate(180%)",
         }}
       >
-        {/* Decorative top gradient line */}
-        <div className="absolute top-0 left-0 right-0 h-[2px] overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-0.5 overflow-hidden">
           <div
             className="h-full w-full"
             style={{
@@ -180,7 +169,6 @@ const Navbar = ({ toggleSidebar }) => {
 
         <div className="relative px-4 lg:px-6">
           <div className="flex items-center justify-between h-16">
-            {/* Left Section */}
             <div className="flex items-center gap-4">
               <button
                 onClick={() => {
@@ -192,19 +180,19 @@ const Navbar = ({ toggleSidebar }) => {
                 <div className="relative w-5 h-5">
                   <span
                     className={`absolute left-0 w-5 h-0.5 bg-current rounded-full transition-all duration-300 ${
-                      mobileMenuOpen ? "top-[9px] rotate-45" : "top-1 rotate-0"
+                      mobileMenuOpen ? "top-2.25 rotate-45" : "top-1 rotate-0"
                     }`}
                   />
                   <span
-                    className={`absolute left-0 top-[9px] w-5 h-0.5 bg-current rounded-full transition-all duration-300 ${
+                    className={`absolute left-0 top-2.25 w-5 h-0.5 bg-current rounded-full transition-all duration-300 ${
                       mobileMenuOpen ? "opacity-0 scale-0" : "opacity-100"
                     }`}
                   />
                   <span
                     className={`absolute left-0 w-5 h-0.5 bg-current rounded-full transition-all duration-300 ${
                       mobileMenuOpen
-                        ? "top-[9px] -rotate-45"
-                        : "top-[17px] rotate-0"
+                        ? "top-2.25 -rotate-45"
+                        : "top-4.25 rotate-0"
                     }`}
                   />
                 </div>
@@ -221,7 +209,7 @@ const Navbar = ({ toggleSidebar }) => {
                 <div
                   className={`absolute -inset-0.5 rounded-2xl transition-all duration-500 ${
                     searchFocused
-                      ? "opacity-100 bg-gradient-to-r from-violet-400/20 via-blue-400/20 to-cyan-400/20 blur-sm"
+                      ? "opacity-100 bg-linear-to-r from-violet-400/20 via-blue-400/20 to-cyan-400/20 blur-sm"
                       : "opacity-0"
                   }`}
                 />
@@ -301,7 +289,7 @@ const Navbar = ({ toggleSidebar }) => {
                   />
                   {unreadCount > 0 && (
                     <>
-                      <span className="absolute top-1 right-1 w-5 h-5 bg-gradient-to-br from-violet-500 to-indigo-600 rounded-full flex items-center justify-center">
+                      <span className="absolute top-1 right-1 w-5 h-5 bg-linear-to-br from-violet-500 to-indigo-600 rounded-full flex items-center justify-center">
                         <span className="text-[10px] font-bold text-white">
                           {unreadCount}
                         </span>
@@ -334,7 +322,7 @@ const Navbar = ({ toggleSidebar }) => {
                           </div>
                           <div className="flex items-center gap-2">
                             {unreadCount > 0 && (
-                              <span className="px-2.5 py-1 text-[10px] font-bold bg-gradient-to-r from-violet-500 to-indigo-600 text-white rounded-full shadow-sm">
+                              <span className="px-2.5 py-1 text-[10px] font-bold bg-linear-to-r from-violet-500 to-indigo-600 text-white rounded-full shadow-sm">
                                 {unreadCount} new
                               </span>
                             )}
@@ -343,7 +331,7 @@ const Navbar = ({ toggleSidebar }) => {
                       </div>
 
                       {/* Notification List */}
-                      <div className="max-h-[380px] overflow-y-auto">
+                      <div className="max-h-95 overflow-y-auto">
                         {notifications.map((notif, index) => {
                           const colors = getNotifColor(notif.type);
                           const isRead = notifRead.includes(notif.id);
@@ -362,11 +350,11 @@ const Navbar = ({ toggleSidebar }) => {
                               }}
                             >
                               {!isRead && (
-                                <div className="absolute left-2 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-violet-500 to-indigo-500 rounded-full" />
+                                <div className="absolute left-2 top-1/2 -translate-y-1/2 w-1 h-8 bg-linear-to-b from-violet-500 to-indigo-500 rounded-full" />
                               )}
                               <div className="flex gap-3.5">
                                 <div
-                                  className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 ${colors.icon} group-hover:scale-110`}
+                                  className={`shrink-0 w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 ${colors.icon} group-hover:scale-110`}
                                 >
                                   <NotifIcon size={18} />
                                 </div>
@@ -414,7 +402,7 @@ const Navbar = ({ toggleSidebar }) => {
               </button>
 
               {/* Separator */}
-              <div className="hidden md:block w-px h-8 bg-gradient-to-b from-transparent via-gray-200 to-transparent mx-1" />
+              <div className="hidden md:block w-px h-8 bg-linear-to-b from-transparent via-gray-200 to-transparent mx-1" />
 
               {/* User Menu */}
               <div className="relative">
@@ -428,7 +416,7 @@ const Navbar = ({ toggleSidebar }) => {
                   }`}
                 >
                   <div className="relative">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 flex items-center justify-center shadow-md shadow-violet-500/20 group-hover:shadow-violet-500/40 transition-shadow duration-300">
+                    <div className="w-9 h-9 rounded-xl bg-linear-to-br from-violet-500 via-purple-500 to-indigo-600 flex items-center justify-center shadow-md shadow-violet-500/20 group-hover:shadow-violet-500/40 transition-shadow duration-300">
                       <span className="text-white text-sm font-bold">A</span>
                     </div>
                     <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-400 rounded-full border-2 border-white" />
@@ -461,7 +449,7 @@ const Navbar = ({ toggleSidebar }) => {
                     >
                       {/* User Header */}
                       <div className="p-5 relative overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-br from-violet-50 via-purple-50/50 to-indigo-50" />
+                        <div className="absolute inset-0 bg-linear-to-br from-violet-50 via-purple-50/50 to-indigo-50" />
                         <div
                           className="absolute inset-0 opacity-[0.03]"
                           style={{
@@ -471,7 +459,7 @@ const Navbar = ({ toggleSidebar }) => {
                           }}
                         />
                         <div className="relative flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
+                          <div className="w-12 h-12 rounded-xl bg-linear-to-br from-violet-500 via-purple-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
                             <span className="text-white text-lg font-bold">
                               A
                             </span>
@@ -546,11 +534,9 @@ const Navbar = ({ toggleSidebar }) => {
           </div>
         </div>
 
-        {/* Bottom border gradient */}
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-200/60 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-gray-200/60 to-transparent" />
       </nav>
 
-      {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
           <div
@@ -562,7 +548,6 @@ const Navbar = ({ toggleSidebar }) => {
             style={{ animation: "mobileSlide 0.4s ease-out" }}
           >
             <div className="p-5 space-y-4">
-              {/* Mobile Search */}
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <input
@@ -572,11 +557,10 @@ const Navbar = ({ toggleSidebar }) => {
                 />
               </div>
 
-              {/* Mobile User Info */}
               <div className="relative overflow-hidden p-4 rounded-2xl border border-gray-200/60">
-                <div className="absolute inset-0 bg-gradient-to-br from-violet-50 via-purple-50/30 to-indigo-50" />
+                <div className="absolute inset-0 bg-linear-to-br from-violet-50 via-purple-50/30 to-indigo-50" />
                 <div className="relative flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
+                  <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-violet-500 via-purple-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
                     <span className="text-white text-xl font-bold">A</span>
                   </div>
                   <div>
@@ -593,8 +577,6 @@ const Navbar = ({ toggleSidebar }) => {
                   </div>
                 </div>
               </div>
-
-              {/* Mobile Menu Items */}
               <div className="space-y-1">
                 <button className="w-full text-left px-4 py-3.5 text-gray-700 hover:bg-gray-50 rounded-xl transition-all flex items-center gap-3 group">
                   <div className="p-2 rounded-xl bg-gray-100 group-hover:bg-violet-100 transition-colors">
@@ -615,7 +597,7 @@ const Navbar = ({ toggleSidebar }) => {
                   <span className="font-medium">Settings</span>
                 </button>
                 <div className="py-2">
-                  <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+                  <div className="h-px bg-linear-to-r from-transparent via-gray-200 to-transparent" />
                 </div>
                 <button
                   onClick={handleLogout}

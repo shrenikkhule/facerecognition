@@ -98,7 +98,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       >
         <div className="absolute right-0 top-0 bottom-0 w-px bg-linear-to-b from-violet-200/50 via-blue-200/50 to-purple-200/50" />
 
-        {/* Logo Section */}
         <div className="relative h-20 flex items-center justify-between px-4">
           <div
             className={`flex items-center gap-3 transition-all duration-500 ${
@@ -106,7 +105,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             }`}
           >
             <div className="relative group cursor-pointer">
-              {/* Animated ring */}
+             
               <div className="absolute -inset-1">
                 <div
                   className="w-full h-full rounded-2xl opacity-40 group-hover:opacity-70 transition-opacity duration-500"
@@ -120,7 +119,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
               <div className="relative bg-linear-to-br from-violet-500 via-purple-500 to-indigo-600 p-2.5 rounded-2xl shadow-lg shadow-violet-500/20">
                 <ScanFace className="text-white w-6 h-6" strokeWidth={2} />
               </div>
-              {/* Pulse dot */}
+             
               <div className="absolute -top-0.5 -right-0.5 w-3 h-3">
                 <div className="absolute inset-0 bg-emerald-400 rounded-full animate-ping opacity-75" />
                 <div className="relative bg-emerald-400 w-3 h-3 rounded-full border-2 border-white" />
@@ -166,7 +165,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           )}
         </div>
 
-        {/* Navigation */}
         <nav className="flex-1 overflow-y-auto overflow-x-hidden mt-4 px-3 space-y-1 relative">
           {menuItems.map((item, index) => {
             const Icon = item.icon;
@@ -191,7 +189,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
               >
                 {({ isActive }) => (
                   <>
-                    {/* Active indicator line */}
+                   
                     {isActive && (
                       <div
                         className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 rounded-r-full bg-linear-to-b ${item.color}`}
@@ -200,8 +198,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                         }}
                       />
                     )}
-
-                    {/* Icon container */}
                     <div className="relative">
                       <div
                         className={`relative p-2 rounded-xl transition-all duration-300 ${
@@ -222,7 +218,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                           strokeWidth={isActive ? 2.5 : 2}
                         />
                       </div>
-                      {/* Glow effect for active */}
+                     
                       {isActive && (
                         <div
                           className={`absolute inset-0 rounded-xl bg-linear-to-br ${item.color} blur-lg opacity-30`}
@@ -256,7 +252,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                       </>
                     )}
 
-                    {/* Tooltip for collapsed state */}
                     {collapsed && hoveredItem === index && (
                       <div className="absolute left-full ml-3 px-3 py-2 bg-gray-800 text-white text-xs font-medium rounded-lg shadow-xl whitespace-nowrap z-50">
                         {item.name}
@@ -274,7 +269,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             );
           })}
 
-          {/* Divider */}
           <div className="py-3 px-3">
             <div className="h-px bg-linear-to-r from-transparent via-gray-300/50 to-transparent" />
           </div>
@@ -366,9 +360,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           })}
         </nav>
 
-        {/* Status Card */}
-
-        {/* Logout Section */}
+       
         <div className="p-3 relative">
           <div className="absolute top-0 left-3 right-3 h-px bg-linear-to-r from-transparent via-gray-300/50 to-transparent" />
           <button
@@ -393,7 +385,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         </div>
       </aside>
 
-      {/* Spacer */}
       <div
         className={`hidden lg:block transition-all duration-500 ${
           collapsed ? "w-20" : "w-56"

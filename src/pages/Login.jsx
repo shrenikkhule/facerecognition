@@ -50,13 +50,13 @@ export const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden flex items-center justify-center p-4">
       {/* Decorative Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Gradient Circles */}
-        <div className="absolute top-0 -left-40 w-80 h-80 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-        <div className="absolute top-0 -right-40 w-80 h-80 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-40 left-1/2 -translate-x-1/2 w-80 h-80 bg-gradient-to-r from-indigo-400 to-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+        <div className="absolute top-0 -left-40 w-80 h-80 bg-linear-to-r from-blue-400 to-indigo-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+        <div className="absolute top-0 -right-40 w-80 h-80 bg-linear-to-r from-purple-400 to-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-40 left-1/2 -translate-x-1/2 w-80 h-80 bg-linear-to-r from-indigo-400 to-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
 
         {/* Dot Pattern */}
         <div className="absolute inset-0 bg-dot-pattern opacity-30"></div>
@@ -69,13 +69,13 @@ export const Login = () => {
           {/* Logo */}
           <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-sm px-5 py-3 rounded-2xl shadow-lg border border-white/50">
             <div className="relative group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-xl blur opacity-40 group-hover:opacity-60 transition"></div>
-              <div className="relative bg-gradient-to-br from-blue-500 to-indigo-600 p-3 rounded-xl">
+              <div className="absolute -inset-1 bg-linear-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-xl blur opacity-40 group-hover:opacity-60 transition"></div>
+              <div className="relative bg-linear-to-br from-blue-500 to-indigo-600 p-3 rounded-xl">
                 <ScanFace className="text-white w-8 h-8" strokeWidth={2.5} />
               </div>
             </div>
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <h1 className="text-2xl font-bold bg-linear-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 FaceTrack AI
               </h1>
             </div>
@@ -85,7 +85,7 @@ export const Login = () => {
           <div className="space-y-4">
             <h2 className="text-5xl font-bold text-gray-800 leading-tight">
               Welcome to the
-              <span className="block bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="block bg-linear-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 Future of Recognition
               </span>
             </h2>
@@ -106,7 +106,7 @@ export const Login = () => {
                 key={index}
                 className="flex items-center gap-3 bg-white/60 backdrop-blur-sm px-4 py-3 rounded-lg border border-white/50"
               >
-                <CheckCircle2 className="text-green-500 w-5 h-5 flex-shrink-0" />
+                <CheckCircle2 className="text-green-500 w-5 h-5 shrink-0" />
                 <span className="text-gray-700 font-medium">{feature}</span>
               </div>
             ))}
@@ -119,8 +119,8 @@ export const Login = () => {
           <div className="lg:hidden text-center mb-8">
             <div className="inline-flex items-center justify-center mb-4">
               <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-2xl blur opacity-40 group-hover:opacity-60 transition"></div>
-                <div className="relative bg-gradient-to-br from-blue-500 to-indigo-600 p-4 rounded-2xl">
+                <div className="absolute -inset-1 bg-linear-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-2xl blur opacity-40 group-hover:opacity-60 transition"></div>
+                <div className="relative bg-linear-to-br from-blue-500 to-indigo-600 p-4 rounded-2xl">
                   <ScanFace
                     className="text-white w-10 h-10"
                     strokeWidth={2.5}
@@ -129,7 +129,7 @@ export const Login = () => {
               </div>
             </div>
             <h1 className="text-3xl font-bold mb-2">
-              <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 FaceTrack AI
               </span>
             </h1>
@@ -238,7 +238,7 @@ export const Login = () => {
                 disabled={isLoading}
                 className="relative w-full group overflow-hidden rounded-lg"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-blue-500/50"></div>
+                <div className="absolute inset-0 bg-linear-to-r from-blue-600 via-indigo-600 to-purple-600 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-blue-500/50"></div>
                 <div className="relative flex items-center justify-center gap-2 px-6 py-3 text-white font-semibold">
                   {isLoading ? (
                     <>
@@ -256,7 +256,7 @@ export const Login = () => {
             </form>
 
             {/* Demo Credentials Card */}
-            {/* <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
+            {/* <div className="bg-linear-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
               <div className="space-y-2 text-sm">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600 font-medium">Email:</span>

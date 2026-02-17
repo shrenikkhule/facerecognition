@@ -41,13 +41,10 @@ export const Employees = () => {
     address: "At Post Aurangabad",
     photo: "",
   });
-
-  // Handle Input Change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle Photo Upload
   const handlePhoto = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -58,7 +55,6 @@ export const Employees = () => {
     }
   };
 
-  // Add or Update Employee
   const handleSubmit = () => {
     if (!formData.name || !formData.designation) return;
 
@@ -84,20 +80,17 @@ export const Employees = () => {
     setShowAddModal(false);
   };
 
-  // Edit Employee
   const handleEdit = (emp, index) => {
     setFormData(emp);
     setEditIndex(index);
     setShowAddModal(true);
   };
 
-  // Delete Employee
   const handleDelete = (index) => {
     const updated = employees.filter((_, i) => i !== index);
     setEmployees(updated);
   };
 
-  // Open Profile Modal
   const openProfile = (emp) => {
     setSelectedEmployee(emp);
     setShowProfileModal(true);
@@ -105,7 +98,7 @@ export const Employees = () => {
 
   return (
     <div className="p-6">
-      {/* Header */}
+   
       <div className="flex justify-between mb-6">
         <h1 className="text-2xl font-bold">Employees</h1>
         <button
@@ -116,7 +109,6 @@ export const Employees = () => {
         </button>
       </div>
 
-      {/* Employee Table */}
       <div className="bg-white rounded-2xl shadow p-4 overflow-x-auto">
         <table className="w-full">
           <thead>
@@ -166,7 +158,6 @@ export const Employees = () => {
         </table>
       </div>
 
-      {/* ================= Add / Edit Modal ================= */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
           <div className="bg-white w-full max-w-lg p-6 rounded-2xl">
@@ -244,7 +235,6 @@ export const Employees = () => {
         </div>
       )}
 
-      {/* ================= Profile Modal ================= */}
       {showProfileModal && selectedEmployee && (
         <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
           <div className="bg-white w-full max-w-md p-6 rounded-2xl text-center">
