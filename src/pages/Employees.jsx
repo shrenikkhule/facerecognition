@@ -1,83 +1,117 @@
+import { useEffect } from "react";
 import { useState } from "react";
-
+import Swal from "sweetalert2";
+import toast from "react-hot-toast";
 export const Employees = () => {
-  const [employees, setEmployees] = useState([
-    {
-      name: "Shrenik khule",
-      designation: "Web Application Developer",
-      empId: "00395",
-      mobile: "7378507919",
-      bloodGroup: "AB+",
-      address: "At Post Aurangabad",
-    },
-    {
-      name: "Rahul Gandhi",
-      designation: "Indain Congress Party",
-      empId: "9203",
-      mobile: "7378507919",
-      bloodGroup: "AB+",
-      address: "At Post Mumbai",
-    },
-    {
-      name: "Narendra Modi",
-      designation: "Prime Minister of India",
-      empId: "00012",
-      mobile: "7378507919",
-      bloodGroup: "zz+",
-      address: "At Post Gujrat",
-    },
-  ]);
+  const [employees, setEmployees] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [editIndex, setEditIndex] = useState(null);
 
-  const [formData, setFormData] = useState({
-    name: "Shrenik khule",
-    designation: "Web Application Developer",
-    empId: "00395",
-    mobile: "7378507919",
-    bloodGroup: "AB+",
-    address: "At Post Aurangabad",
-    photo: "",
-  });
+  const [formData, setFormData] = useState({});
+  const getEmployees = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch("http://localhost:5000/api/employees", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setEmployees(data.data);
+    } catch (error) {
+      console.log(error, "Check if the token is actually there!");
+    }
+  };
+  useEffect(() => {
+    getEmployees();
+  }, []);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handlePhoto = (e) => {
     const file = e.target.files[0];
+
     if (file) {
       setFormData({
         ...formData,
-        photo: URL.createObjectURL(file),
+        profilePhoto: file,
+        preview: URL.createObjectURL(file),
       });
     }
   };
 
-  const handleSubmit = () => {
-    if (!formData.name || !formData.designation) return;
+  const openProfile = (emp) => {
+    setSelectedEmployee(emp);
+    setShowProfileModal(true);
+  };
 
-    if (editIndex !== null) {
-      const updated = [...employees];
-      updated[editIndex] = formData;
-      setEmployees(updated);
-      setEditIndex(null);
-    } else {
-      setEmployees([...employees, formData]);
+  const handleSubmit = async () => {
+    if (!formData.name || !formData.designation) {
+      toast.error("Name and Designation are required ⚠️");
+      return;
     }
 
-    setFormData({
-      name: "Shrenik khule",
-      designation: "Web Application Developer",
-      empId: "00395",
-      mobile: "7378507919",
-      bloodGroup: "AB+",
-      address: "At Post Aurangabad",
-      photo: "",
-    });
+    const data = new FormData();
 
-    setShowAddModal(false);
+    data.append("employeeName", formData.name);
+    data.append("designation", formData.designation);
+    data.append("employeeId", formData.empId);
+    data.append("mobileNumber", formData.mobile);
+    data.append("bloodGroup", formData.bloodGroup);
+    data.append("address", formData.address);
+
+    if (formData.profilePhoto) {
+      data.append("profilePhoto", formData.profilePhoto);
+    }
+
+    const loadingToast = toast.loading("Adding Employee...");
+
+    try {
+      const res = await fetch("http://localhost:5000/api/employees", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: data,
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.message || "Something went wrong");
+      }
+
+      toast.dismiss(loadingToast);
+      toast.success("Employee Added Successfully 🎉");
+
+      getEmployees();
+
+      // Optional: reset form
+      setFormData({
+        name: "",
+        designation: "",
+        empId: "",
+        mobile: "",
+        bloodGroup: "",
+        address: "",
+        profilePhoto: null,
+      });
+    } catch (err) {
+      toast.dismiss(loadingToast);
+      toast.error(err.message || "Failed to add employee ❌");
+    }
   };
 
   const handleEdit = (emp, index) => {
@@ -86,19 +120,73 @@ export const Employees = () => {
     setShowAddModal(true);
   };
 
-  const handleDelete = (index) => {
-    const updated = employees.filter((_, i) => i !== index);
-    setEmployees(updated);
-  };
+  const handleDelete = async (id) => {
+    const result = await Swal.fire({
+      title: "Delete Employee?",
+      text: "This action cannot be undone!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Yes, delete it",
+      backdrop: `
+      rgba(0,0,0,0.7)
+      left top
+      no-repeat
+    `,
+      showClass: {
+        popup: "animate__animated animate__zoomIn",
+      },
+      hideClass: {
+        popup: "animate__animated animate__zoomOut",
+      },
+    });
 
-  const openProfile = (emp) => {
-    setSelectedEmployee(emp);
-    setShowProfileModal(true);
+    if (result.isConfirmed) {
+      try {
+        Swal.fire({
+          title: "Deleting...",
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        });
+
+        const res = await fetch(`http://localhost:5000/api/employees/${id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.message);
+        }
+
+        Swal.fire({
+          icon: "success",
+          title: "Deleted!",
+          text: "Employee removed successfully.",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+
+        // ✅ Optional: remove from UI state
+        setEmployees((prev) => prev.filter((emp) => emp._id !== id));
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: error.message || "Something went wrong!",
+        });
+      }
+    }
   };
 
   return (
     <div className="p-6">
-   
       <div className="flex justify-between mb-6">
         <h1 className="text-2xl font-bold">Employees</h1>
         <button
@@ -130,13 +218,13 @@ export const Employees = () => {
               >
                 <td className="py-2">
                   <img
-                    src={emp.photo || "https://via.placeholder.com/40"}
+                    src={`http://localhost:5000/uploads/employees/${emp.profilePhoto}`}
                     className="w-10 h-10 rounded-full object-cover"
                   />
                 </td>
-                <td>{emp.name}</td>
+                <td>{emp.employeeName}</td>
                 <td>{emp.designation}</td>
-                <td>{emp.empId}</td>
+                <td>{emp.employeeId}</td>
 
                 <td onClick={(e) => e.stopPropagation()} className="space-x-2">
                   <button
@@ -146,7 +234,7 @@ export const Employees = () => {
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(index)}
+                    onClick={() => handleDelete(emp._id)}
                     className="bg-red-500 text-white px-3 py-1 rounded"
                   >
                     Delete
@@ -213,8 +301,12 @@ export const Employees = () => {
                 onChange={handleChange}
                 className="border p-2 rounded"
               />
-
-              <input type="file" onChange={handlePhoto} />
+              <input
+                type="file"
+                name="profilePhoto"
+                accept="image/*"
+                onChange={handlePhoto}
+              />
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
@@ -239,19 +331,21 @@ export const Employees = () => {
         <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
           <div className="bg-white w-full max-w-md p-6 rounded-2xl text-center">
             <img
-              src={selectedEmployee.photo || "https://via.placeholder.com/100"}
+              src={`http://localhost:5000/uploads/employees/${selectedEmployee.profilePhoto}`}
               className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
             />
 
-            <h2 className="text-xl font-bold">{selectedEmployee.name}</h2>
+            <h2 className="text-xl font-bold">
+              {selectedEmployee.employeeName}
+            </h2>
             <p className="text-gray-500 mb-4">{selectedEmployee.designation}</p>
 
             <div className="text-left space-y-2">
               <p>
-                <b>Employee ID:</b> {selectedEmployee.empId}
+                <b>Employee ID:</b> {selectedEmployee.employeeId}
               </p>
               <p>
-                <b>Mobile:</b> {selectedEmployee.mobile}
+                <b>Mobile:</b> {selectedEmployee.mobileNumber}
               </p>
               <p>
                 <b>Blood Group:</b> {selectedEmployee.bloodGroup}

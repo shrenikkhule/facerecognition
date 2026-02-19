@@ -396,12 +396,39 @@ export const Dashboard = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  const totalEmployees = useAnimatedCounter(1247, 2000);
+  const [employees, setEmployees] = useState([]);
+  const totalEmployees = useAnimatedCounter(employees.length, 2000);
   const presentToday = useAnimatedCounter(1189, 2200);
   const activeCameras = useAnimatedCounter(24, 1500);
   const alertsCount = useAnimatedCounter(3, 1000);
   const recognitionRate = useAnimatedCounter(98, 2500);
   const avgResponseTime = useAnimatedCounter(45, 1800);
+
+  const getEmployees = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch("http://localhost:5000/api/employees", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setEmployees(data.data);
+    } catch (error) {
+      console.log(error, "Check if the token is actually there!");
+    }
+  };
+  useEffect(() => {
+    getEmployees();
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);

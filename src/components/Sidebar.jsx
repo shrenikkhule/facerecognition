@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -18,7 +18,33 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [hoveredItem, setHoveredItem] = useState(null);
+  const [employees, setEmployees] = useState([]);
 
+  const getEmployees = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch("http://localhost:5000/api/employees", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setEmployees(data.data);
+    } catch (error) {
+      console.log(error, "Check if the token is actually there!");
+    }
+  };
+  useEffect(() => {
+    getEmployees();
+  }, []);
   const menuItems = [
     {
       name: "Dashboard",
@@ -32,7 +58,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       name: "Employees",
       path: "/employees",
       icon: Users,
-      badge: "245",
+      badge: employees.length,
       color: "from-cyan-500 to-blue-600",
       glow: "cyan",
     },
@@ -105,7 +131,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             }`}
           >
             <div className="relative group cursor-pointer">
-             
               <div className="absolute -inset-1">
                 <div
                   className="w-full h-full rounded-2xl opacity-40 group-hover:opacity-70 transition-opacity duration-500"
@@ -119,7 +144,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
               <div className="relative bg-linear-to-br from-violet-500 via-purple-500 to-indigo-600 p-2.5 rounded-2xl shadow-lg shadow-violet-500/20">
                 <ScanFace className="text-white w-6 h-6" strokeWidth={2} />
               </div>
-             
+
               <div className="absolute -top-0.5 -right-0.5 w-3 h-3">
                 <div className="absolute inset-0 bg-emerald-400 rounded-full animate-ping opacity-75" />
                 <div className="relative bg-emerald-400 w-3 h-3 rounded-full border-2 border-white" />
@@ -189,7 +214,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
               >
                 {({ isActive }) => (
                   <>
-                   
                     {isActive && (
                       <div
                         className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 rounded-r-full bg-linear-to-b ${item.color}`}
@@ -218,7 +242,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                           strokeWidth={isActive ? 2.5 : 2}
                         />
                       </div>
-                     
+
                       {isActive && (
                         <div
                           className={`absolute inset-0 rounded-xl bg-linear-to-br ${item.color} blur-lg opacity-30`}
@@ -360,7 +384,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           })}
         </nav>
 
-       
         <div className="p-3 relative">
           <div className="absolute top-0 left-3 right-3 h-px bg-linear-to-r from-transparent via-gray-300/50 to-transparent" />
           <button
