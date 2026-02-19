@@ -7,13 +7,12 @@ export const Employees = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [editIndex, setEditIndex] = useState(null);
-
+  const [editId, setEditId] = useState(null);
+  let isSubmitting = false;
   const [formData, setFormData] = useState({});
   const getEmployees = async () => {
     try {
       const token = localStorage.getItem("token");
-
       const response = await fetch("http://localhost:5000/api/employees", {
         method: "GET",
         headers: {
@@ -21,11 +20,9 @@ export const Employees = () => {
           "Content-Type": "application/json",
         },
       });
-
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
       const data = await response.json();
       setEmployees(data.data);
     } catch (error) {
@@ -76,29 +73,39 @@ export const Employees = () => {
       data.append("profilePhoto", formData.profilePhoto);
     }
 
-    const loadingToast = toast.loading("Adding Employee...");
+    const loadingToast = toast.loading(
+      editId ? "Updating Employee..." : "Adding Employee...",
+    );
 
     try {
-      const res = await fetch("http://localhost:5000/api/employees", {
-        method: "POST",
+      const url = editId
+        ? `http://localhost:5000/api/employees/${editId}`
+        : "http://localhost:5000/api/employees";
+
+      const method = editId ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: data,
       });
-
       const result = await res.json();
 
       if (!res.ok) {
         throw new Error(result.message || "Something went wrong");
       }
-
       toast.dismiss(loadingToast);
-      toast.success("Employee Added Successfully 🎉");
-
+      toast.success(
+        editId
+          ? "Employee Updated Successfully 🎉"
+          : "Employee Added Successfully 🎉",
+      );
       getEmployees();
+      setEditId(null);
+      setShowAddModal(false);
 
-      // Optional: reset form
       setFormData({
         name: "",
         designation: "",
@@ -110,16 +117,23 @@ export const Employees = () => {
       });
     } catch (err) {
       toast.dismiss(loadingToast);
-      toast.error(err.message || "Failed to add employee ❌");
+      toast.error(err.message || "Operation Failed ❌");
     }
   };
+  const handleEdit = (emp) => {
+    setFormData({
+      name: emp.employeeName,
+      designation: emp.designation,
+      empId: emp.employeeId,
+      mobile: emp.mobileNumber,
+      bloodGroup: emp.bloodGroup,
+      address: emp.address,
+      profilePhoto: null,
+    });
 
-  const handleEdit = (emp, index) => {
-    setFormData(emp);
-    setEditIndex(index);
+    setEditId(emp._id);
     setShowAddModal(true);
   };
-
   const handleDelete = async (id) => {
     const result = await Swal.fire({
       title: "Delete Employee?",
@@ -132,16 +146,10 @@ export const Employees = () => {
       backdrop: `
       rgba(0,0,0,0.7)
       left top
-      no-repeat
-    `,
-      showClass: {
-        popup: "animate__animated animate__zoomIn",
-      },
-      hideClass: {
-        popup: "animate__animated animate__zoomOut",
-      },
+      no-repeat`,
+      showClass: { popup: "animate__animated animate__zoomIn" },
+      hideClass: { popup: "animate__animated animate__zoomOut" },
     });
-
     if (result.isConfirmed) {
       try {
         Swal.fire({
@@ -151,20 +159,16 @@ export const Employees = () => {
             Swal.showLoading();
           },
         });
-
         const res = await fetch(`http://localhost:5000/api/employees/${id}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-
         const data = await res.json();
-
         if (!res.ok) {
           throw new Error(data.message);
         }
-
         Swal.fire({
           icon: "success",
           title: "Deleted!",
@@ -173,7 +177,6 @@ export const Employees = () => {
           showConfirmButton: false,
         });
 
-        // ✅ Optional: remove from UI state
         setEmployees((prev) => prev.filter((emp) => emp._id !== id));
       } catch (error) {
         Swal.fire({
@@ -184,7 +187,6 @@ export const Employees = () => {
       }
     }
   };
-
   return (
     <div className="p-6">
       <div className="flex justify-between mb-6">
@@ -196,7 +198,6 @@ export const Employees = () => {
           + Add Employee
         </button>
       </div>
-
       <div className="bg-white rounded-2xl shadow p-4 overflow-x-auto">
         <table className="w-full">
           <thead>
@@ -208,7 +209,6 @@ export const Employees = () => {
               <th>Actions</th>
             </tr>
           </thead>
-
           <tbody>
             {employees.map((emp, index) => (
               <tr
@@ -229,13 +229,13 @@ export const Employees = () => {
                 <td onClick={(e) => e.stopPropagation()} className="space-x-2">
                   <button
                     onClick={() => handleEdit(emp, index)}
-                    className="bg-yellow-400 px-3 py-1 rounded"
+                    className="bg-yellow-400 px-3 py-1 rounded cursor-pointer"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(emp._id)}
-                    className="bg-red-500 text-white px-3 py-1 rounded"
+                    className="bg-red-500 text-white px-3 py-1 rounded cursor-pointer"
                   >
                     Delete
                   </button>
@@ -245,88 +245,105 @@ export const Employees = () => {
           </tbody>
         </table>
       </div>
-
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
-          <div className="bg-white w-full max-w-lg p-6 rounded-2xl">
-            <h2 className="text-xl font-bold mb-4">
-              {editIndex !== null ? "Edit Employee" : "Add Employee"}
-            </h2>
-
-            <div className="grid grid-cols-2 gap-4">
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 px-4"
+          onClick={() => setShowAddModal(false)}
+        >
+          <div
+            className="bg-white w-full max-w-xl p-8 rounded-3xl shadow-2xl transform transition-all duration-300 scale-100"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-800">
+                {editId ? "Edit Employee" : "Add Employee"}
+              </h2>
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="text-gray-500 hover:text-red-500 text-xl"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input
                 name="name"
                 placeholder="Employee Name"
                 value={formData.name}
                 onChange={handleChange}
-                className="border p-2 rounded"
+                className="border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-3 rounded-xl outline-none transition"
               />
-
               <input
                 name="designation"
                 placeholder="Designation"
                 value={formData.designation}
                 onChange={handleChange}
-                className="border p-2 rounded"
+                className="border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-3 rounded-xl outline-none transition"
               />
-
               <input
                 name="empId"
                 placeholder="Employee ID"
                 value={formData.empId}
                 onChange={handleChange}
-                className="border p-2 rounded"
+                className="border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-3 rounded-xl outline-none transition"
               />
-
               <input
                 name="mobile"
                 placeholder="Mobile Number"
                 value={formData.mobile}
                 onChange={handleChange}
-                className="border p-2 rounded"
+                className="border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-3 rounded-xl outline-none transition"
               />
-
               <input
                 name="bloodGroup"
                 placeholder="Blood Group"
                 value={formData.bloodGroup}
                 onChange={handleChange}
-                className="border p-2 rounded"
+                className="border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-3 rounded-xl outline-none transition"
               />
-
               <input
                 name="address"
                 placeholder="Address"
                 value={formData.address}
                 onChange={handleChange}
-                className="border p-2 rounded"
+                className="border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-3 rounded-xl outline-none transition"
               />
-              <input
-                type="file"
-                name="profilePhoto"
-                accept="image/*"
-                onChange={handlePhoto}
-              />
+              <div className="col-span-1 md:col-span-2">
+                <input
+                  type="file"
+                  name="profilePhoto"
+                  accept="image/*"
+                  onChange={handlePhoto}
+                  className="w-full border border-gray-300 p-3 rounded-xl cursor-pointer"
+                />
+              </div>
             </div>
-
-            <div className="flex justify-end gap-3 mt-6">
+            <div className="flex justify-end gap-4 mt-8">
               <button
                 onClick={() => setShowAddModal(false)}
-                className="px-4 py-2 border rounded"
+                className="px-5 py-2 rounded-xl border border-gray-300 hover:bg-gray-100 transition"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSubmit}
-                className="bg-blue-600 text-white px-4 py-2 rounded"
+                disabled={isSubmitting}
+                className={`px-6 py-2 rounded-xl text-white font-semibold transition ${
+                  isSubmitting
+                    ? "bg-blue-400 cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-700"
+                }`}
               >
-                Save
+                {isSubmitting
+                  ? "Processing..."
+                  : editId
+                    ? "Update Employee"
+                    : "Add Employee"}
               </button>
             </div>
           </div>
         </div>
       )}
-
       {showProfileModal && selectedEmployee && (
         <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
           <div className="bg-white w-full max-w-md p-6 rounded-2xl text-center">
@@ -334,7 +351,6 @@ export const Employees = () => {
               src={`http://localhost:5000/uploads/employees/${selectedEmployee.profilePhoto}`}
               className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
             />
-
             <h2 className="text-xl font-bold">
               {selectedEmployee.employeeName}
             </h2>
@@ -354,7 +370,6 @@ export const Employees = () => {
                 <b>Address:</b> {selectedEmployee.address}
               </p>
             </div>
-
             <button
               onClick={() => setShowProfileModal(false)}
               className="mt-6 bg-blue-600 text-white px-6 py-2 rounded"
